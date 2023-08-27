@@ -29,6 +29,9 @@ class Commentaires
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
     private ?Trick $Trick = null;
 
+    #[ORM\ManyToOne(inversedBy: 'commentaires')]
+    private ?user $auteur = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class Commentaires
     public function setTrick(?Trick $Trick): static
     {
         $this->Trick = $Trick;
+
+        return $this;
+    }
+
+    public function getAuteur(): ?user
+    {
+        return $this->auteur;
+    }
+
+    public function setAuteur(?user $auteur): static
+    {
+        $this->auteur = $auteur;
 
         return $this;
     }
