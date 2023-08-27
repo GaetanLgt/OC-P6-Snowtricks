@@ -31,10 +31,14 @@ class Trick
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'Tricks')]
     private Collection $categories;
 
+    #[ORM\OneToMany(mappedBy: 'Trick', targetEntity: Commentaires::class)]
+    private Collection $commentaires;
+
     public function __construct()
     {
         $this->media = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,6 +134,36 @@ class Trick
     {
         if ($this->categories->removeElement($category)) {
             $category->removeTrick($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commentaires>
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaires $commentaire): static
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires->add($commentaire);
+            $commentaire->setTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaires $commentaire): static
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getTrick() === $this) {
+                $commentaire->setTrick(null);
+            }
         }
 
         return $this;
