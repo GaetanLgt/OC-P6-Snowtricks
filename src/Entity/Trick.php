@@ -28,9 +28,13 @@ class Trick
     #[ORM\OneToMany(mappedBy: 'Trick', targetEntity: Media::class, orphanRemoval: true)]
     private Collection $media;
 
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'Tricks')]
+    private Collection $categories;
+
     public function __construct()
     {
         $this->media = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,6 +103,33 @@ class Trick
             if ($medium->getTrick() === $this) {
                 $medium->setTrick(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->addTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        if ($this->categories->removeElement($category)) {
+            $category->removeTrick($this);
         }
 
         return $this;
